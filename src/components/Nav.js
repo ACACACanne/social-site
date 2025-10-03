@@ -16,14 +16,14 @@ const Nav = () => {
 
       {/* Center: Show "Add Post" if on /addPost */}
       <div className="flex-1 flex justify-center">
-        {pathname === "/addPost" && (
+        {pathname === "/add" && (
           <span className="text-white font-semibold text-lg">Add Post</span>
         )}
       </div>
 
       {/* Right: Show Home link if on /addPost, else show Add Post */}
       <div>
-        {pathname === "/addPost" ? (
+        {pathname === "/add" ? (
           <Link
             href="/"
             className="bg-white text-amber-500 font-semibold px-4 py-2 rounded-full shadow hover:bg-amber-50 hover:text-amber-700 transition"
@@ -32,7 +32,7 @@ const Nav = () => {
           </Link>
         ) : (
           <Link
-            href="/addPost"
+            href="/add"
             className="bg-white text-amber-500 font-semibold px-4 py-2 rounded-full shadow hover:bg-amber-50 hover:text-amber-700 transition"
           >
             + Add Post

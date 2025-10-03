@@ -23,7 +23,7 @@ export default function Home() {
           href="/add"
           className="flex-1 bg-amber-50 px-4 py-2 rounded-full text-amber-500 hover:bg-amber-100 transition"
         >
-          What's on your mind?
+          What&apos;s on your mind?
         </Link>
       </div>
 
@@ -42,7 +42,7 @@ export default function Home() {
             </div>
             <p className="text-gray-800">
               No posts yet. Be the first to{" "}
-              <Link href="/addPost" className="text-amber-600 underline">
+              <Link href="/add" className="text-amber-600 underline">
                 add a post
               </Link>
               !
@@ -53,3 +53,7 @@ export default function Home() {
     </main>
   );
 }
+
+
+
+
