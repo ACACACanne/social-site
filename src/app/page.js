@@ -2,13 +2,13 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="max-w-3xl mx-auto p-6 bg-amber-50 min-h-screen">
+    <main className="max-w-3xl mx-auto p-6 bg-gradient-to-r from-indigo-900 via-purple-700 to-blue-600 text-white shadow min-h-screen">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-4xl font-extrabold text-amber-600">SocialSite</h1>
+        <h1 className="text-4xl font-extrabold text-amber-600">Social Site</h1>
         <Link
           href="/add"
-          className="bg-amber-400 hover:bg-amber-500 text-white font-semibold px-4 py-2 rounded shadow"
+          className="bg-amber-600 hover:bg-amber-500 text-white font-semibold px-4 py-2 rounded shadow"
         >
           + Add Post
         </Link>

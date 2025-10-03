@@ -8,10 +8,10 @@ const Nav = () => {
   const pathname = usePathname();
 
   return (
-    <nav className="p-4 bg-amber-400 flex justify-between items-center shadow">
+    <nav className="p-4 bg-gradient-to-r from-indigo-900 via-purple-700 to-blue-600 flex justify-between items-center shadow">
       {/* Left: Logo */}
       <Link href="/" className="text-white font-bold text-xl tracking-wide hover:text-amber-200 transition">
-        SocialSite
+        Social Site
       </Link>
 
       {/* Center: Show "Add Post" if on /addPost */}
