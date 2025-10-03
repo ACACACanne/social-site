@@ -1,6 +1,24 @@
+'use client';
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 export default function Home() {
+
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    const loadPosts = () => {
+      const storedPosts = JSON.parse(localStorage.getItem('posts') || '[]');
+      setPosts(storedPosts);
+    };
+
+    loadPosts();
+
+    // listen for changes from other tabs
+    window.addEventListener('storage', loadPosts);
+    return () => window.removeEventListener('storage', loadPosts);
+  }, []);
+
   return (
     <main className="max-w-3xl mx-auto p-6 bg-gradient-to-r from-indigo-900 via-purple-700 to-blue-600 text-white shadow min-h-screen">
       {/* Header */}
@@ -48,6 +66,23 @@ export default function Home() {
               !
             </p>
           </div>
+          {posts.map((post, index) => (
+              <div key={index} className="bg-white/10 rounded-lg shadow p-5 border border-blue-400">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 rounded-full bg-blue-300 flex items-center justify-center font-bold text-blue-900">
+                    {post.userName.charAt(0).toUpperCase()}
+                  </div>
+                  <span className="font-semibold">{post.userName}</span>
+                  <span className="text-xs text-blue-200 ml-auto">Just now</span>
+                </div>
+                <p className="text-blue-100 mb-2">{post.content}</p>
+                {post.image && (
+                  <p className="text-xs text-blue-300 italic">Image: {post.image}</p>
+                )}
+              </div>
+            ))}
+
+
         </div>
       </section>
     </main>

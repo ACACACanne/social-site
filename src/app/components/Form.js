@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { CloudArrowUpIcon } from '@heroicons/react/24/outline';
@@ -9,15 +10,13 @@ const Form = () => {
   const [userName, setUserName] = useState('');
   const [content, setContent] = useState('');
   const [images, setImages] = useState([]);
-  const [imageUrls, setImageUrls] = useState([]);
   const [acceptedPolicy, setAcceptedPolicy] = useState(false);
   const [showPolicyModal, setShowPolicyModal] = useState(false);
+  const router = useRouter();
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     setImages(files);
-    setImageUrls([]);
-    toast.success(`${files.length} file(s) selected`);
   };
 
   const handleFileDrop = (e) => {
@@ -25,59 +24,40 @@ const Form = () => {
     const files = Array.from(e.dataTransfer.files);
     if (files.length) {
       setImages(files);
-      setImageUrls([]);
       toast.success(`${files.length} file(s) dropped`);
-    } else {
-      const url = e.dataTransfer.getData('text/uri-list') || e.dataTransfer.getData('text/plain');
-      if (url && isValidUrl(url)) {
-        setImageUrls((prev) => [...prev, url]);
-        setImages([]);
-        toast.success('Image URL dropped successfully!');
-      } else {
-        toast.error('Invalid URL dropped.');
-      }
     }
   };
 
-  const isValidUrl = (string) => {
-    try {
-      new URL(string);
-      return true;
-    } catch (_) {
-      return false;
-    }
-  };
+  const convertToBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
 
-  const handleDropZoneClick = () => {
-    document.getElementById('fileUpload').click();
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!userName || !content) {
-      toast.error('Please fill in all required fields.');
+    if (!userName || !content || !acceptedPolicy) {
+      toast.error('Please complete all fields and accept the Privacy Policy.');
       return;
     }
-    if (!acceptedPolicy) {
-      toast.error('Please accept the Privacy Policy to continue.');
-      return;
-    }
+
+    const base64Images = await Promise.all(images.map((img) => convertToBase64(img)));
 
     const postData = {
       userName,
       content,
-      images: images.map((img) => img.name),
-      imageUrls,
+      images: base64Images,
     };
 
-    console.log('Post submitted:', postData);
-    toast.success('Post created successfully!');
+    const existingPosts = JSON.parse(localStorage.getItem('posts')) || [];
+    const updatedPosts = [postData, ...existingPosts];
+    localStorage.setItem('posts', JSON.stringify(updatedPosts));
 
-    setUserName('');
-    setContent('');
-    setImages([]);
-    setImageUrls([]);
-    setAcceptedPolicy(false);
+    toast.success('Post created successfully!');
+    router.push('/');
+    router.refresh();
   };
 
   return (
@@ -87,27 +67,27 @@ const Form = () => {
         onDrop={handleFileDrop}
         className="max-w-md mx-auto p-6 bg-gradient-to-br from-indigo-900 via-purple-700 to-blue-600 shadow-md rounded-md border-2 border-dashed border-blue-300 text-white"
       >
-        <h1 className="text-xl font-semibold mb-4 text-white">Create a Post</h1>
-        <form onSubmit={handleSubmit} className="space-y-4 text-white">
+        <h1 className="text-xl font-semibold mb-4">Create a Post</h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
             placeholder="Your name"
             value={userName}
             onChange={(e) => setUserName(e.target.value)}
-            className="w-full border p-2 border-blue-300 rounded text-white"
+            className="w-full border border-blue-300 p-2 rounded text-white bg-transparent"
             required
           />
           <textarea
             placeholder="What is on your mind?"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="w-full border p-2 rounded h-32 resize-none text-white border-blue-300"
+            className="w-full border border-blue-300 p-2 rounded h-32 resize-none text-white bg-transparent"
             required
           />
 
           {/* Drop Zone */}
           <div
-            onClick={handleDropZoneClick}
+            onClick={() => document.getElementById('fileUpload').click()}
             className="flex flex-col items-center justify-center border-2 border-dashed border-blue-400 rounded-md p-6 cursor-pointer bg-white/10 hover:bg-white/20 transition"
           >
             <CloudArrowUpIcon className="h-10 w-10 text-blue-300 mb-2" />
@@ -136,18 +116,6 @@ const Form = () => {
               ))}
             </div>
           )}
-          {imageUrls.length > 0 && images.length === 0 && (
-            <div className="grid grid-cols-2 gap-2 mt-2">
-              {imageUrls.map((url, index) => (
-                <img
-                  key={index}
-                  src={url}
-                  alt={`Dropped URL ${index + 1}`}
-                  className="w-full h-auto rounded"
-                />
-              ))}
-            </div>
-          )}
 
           {/* Privacy Policy */}
           <div className="space-y-2 bg-white/10 p-4 rounded-md border border-blue-400">
@@ -171,22 +139,23 @@ const Form = () => {
                 required
               />
               <span className="text-sm">
-                I have read, understood, and accepted the {''}
+                I have read, understood, and accepted the{' '}
                 <a
                   href="/privacy-policy"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="underline font-semibold text-blue-300 hover:text-blue-500"
                 >
-                  Privacy Policy
+                  PRIVACY POLICY
                 </a>{' '}
+                for membership.
               </span>
             </label>
           </div>
 
           <button
             type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
           >
             Submit Post
           </button>
