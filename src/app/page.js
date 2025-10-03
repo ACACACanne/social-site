@@ -1,6 +1,5 @@
 import Link from "next/link";
 
-
 export default function Home() {
   return (
     <main className="max-w-3xl mx-auto p-6 bg-amber-50 min-h-screen">
@@ -8,7 +7,7 @@ export default function Home() {
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-4xl font-extrabold text-amber-600">SocialSite</h1>
         <Link
-          href="/addPost"
+          href="/add"
           className="bg-amber-400 hover:bg-amber-500 text-white font-semibold px-4 py-2 rounded shadow"
         >
           + Add Post
@@ -21,7 +20,7 @@ export default function Home() {
           U
         </div>
         <Link
-          href="/addPost"
+          href="/add"
           className="flex-1 bg-amber-50 px-4 py-2 rounded-full text-amber-500 hover:bg-amber-100 transition"
         >
           What's on your mind?
@@ -53,4 +52,4 @@ export default function Home() {
       </section>
     </main>
   );
-}ª
+}
