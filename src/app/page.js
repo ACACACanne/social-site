@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+
 export default function Home() {
   return (
     <main className="max-w-3xl mx-auto p-6 bg-amber-50 min-h-screen">
